@@ -69,7 +69,7 @@ class EventMessageMapper {
         }
         MessageContent(
             body = message.body(),
-            inReplyTo = message.inReplyTo()?.eventId?.let(::EventId),
+            inReplyTo = message.inReplyTo()?.let(::EventId), // TODO Revert
             isEdited = message.isEdited(),
             type = type
         )

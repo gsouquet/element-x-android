@@ -51,7 +51,12 @@ class RustMatrixAuthenticationService @Inject constructor(
     private val sessionStore: SessionStore,
 ) : MatrixAuthenticationService {
 
-    private val authService: RustAuthenticationService = RustAuthenticationService(baseDirectory.absolutePath, null, null)
+    private val authService: RustAuthenticationService = RustAuthenticationService(
+        basePath = baseDirectory.absolutePath,
+        passphrase = null,
+        oidcClientMetadata = null, // TODO Oidc <-
+        customSlidingSyncProxy = null
+    )
     private var currentHomeserver = MutableStateFlow<MatrixHomeServerDetails?>(null)
 
     override fun isLoggedIn(): Flow<Boolean> {

@@ -25,8 +25,8 @@ import io.element.android.libraries.matrix.api.timeline.item.event.ProfileTimeli
 import org.matrix.rustcomponents.sdk.Reaction
 import org.matrix.rustcomponents.sdk.EventSendState as RustEventSendState
 import org.matrix.rustcomponents.sdk.EventTimelineItem as RustEventTimelineItem
-import org.matrix.rustcomponents.sdk.ProfileDetails as RustProfileDetails
 
+// TODO Revert change here.
 class EventTimelineItemMapper(private val contentMapper: TimelineEventContentMapper = TimelineEventContentMapper()) {
 
     fun map(eventTimelineItem: RustEventTimelineItem): EventTimelineItem = eventTimelineItem.use {
@@ -40,22 +40,9 @@ class EventTimelineItemMapper(private val contentMapper: TimelineEventContentMap
             localSendState = eventTimelineItem.localSendState()?.map(),
             reactions = eventTimelineItem.reactions().map(),
             sender = UserId(eventTimelineItem.sender()),
-            senderProfile = eventTimelineItem.senderProfile().map(),
+            senderProfile = ProfileTimelineDetails.Unavailable,
             timestamp = eventTimelineItem.timestamp().toLong(),
             content = contentMapper.map(eventTimelineItem.content())
-        )
-    }
-}
-
-fun RustProfileDetails.map(): ProfileTimelineDetails {
-    return when (this) {
-        RustProfileDetails.Pending -> ProfileTimelineDetails.Pending
-        RustProfileDetails.Unavailable -> ProfileTimelineDetails.Unavailable
-        is RustProfileDetails.Error -> ProfileTimelineDetails.Error(message)
-        is RustProfileDetails.Ready -> ProfileTimelineDetails.Ready(
-            displayName = displayName,
-            displayNameAmbiguous = displayNameAmbiguous,
-            avatarUrl = avatarUrl
         )
     }
 }

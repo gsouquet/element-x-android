@@ -140,7 +140,7 @@ class RustMatrixClient constructor(
         .slidingSync()
         .homeserver("https://slidingsync.lab.matrix.org")
         .withCommonExtensions()
-        .storageKey("ElementX")
+        // TODO Revert .storageKey("ElementX")
         .addList(visibleRoomsSlidingSyncList)
         .addList(invitesSlidingSyncList)
         .use {
@@ -215,7 +215,7 @@ class RustMatrixClient constructor(
     override suspend fun createRoom(createRoomParams: CreateRoomParameters): Result<RoomId> = withContext(dispatchers.io) {
         runCatching {
             val rustParams = RustCreateRoomParameters(
-                name = createRoomParams.name,
+                name = createRoomParams.name.orEmpty(), // TODO Revert
                 topic = createRoomParams.topic,
                 isEncrypted = createRoomParams.isEncrypted,
                 isDirect = createRoomParams.isDirect,

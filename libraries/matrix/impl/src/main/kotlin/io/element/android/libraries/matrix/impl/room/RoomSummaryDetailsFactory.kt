@@ -38,7 +38,7 @@ class RoomSummaryDetailsFactory(private val roomMessageFactory: RoomMessageFacto
             unreadNotificationCount = slidingSyncRoom.unreadNotifications().use { it.notificationCount().toInt() },
             lastMessage = latestRoomMessage,
             lastMessageTimestamp = latestRoomMessage?.originServerTs,
-            inviter = room?.inviter()?.let(RoomMemberMapper::map),
+            inviter = null // TODO Revert room?.inviter()?.let(RoomMemberMapper::map),
         )
     }
 
