@@ -22,9 +22,9 @@ import app.cash.molecule.RecompositionClock
 import app.cash.molecule.moleculeFlow
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
+import io.element.android.features.login.impl.util.LoginConstants
 import io.element.android.libraries.architecture.Async
 import io.element.android.libraries.matrix.test.A_HOMESERVER
-import io.element.android.libraries.matrix.test.A_HOMESERVER_URL
 import io.element.android.libraries.matrix.test.A_HOMESERVER_URL_2
 import io.element.android.libraries.matrix.test.A_THROWABLE
 import io.element.android.libraries.matrix.test.auth.FakeAuthenticationService
@@ -43,7 +43,7 @@ class ChangeServerPresenterTest {
             presenter.present()
         }.test {
             val initialState = awaitItem()
-            assertThat(initialState.homeserver).isEqualTo(A_HOMESERVER_URL)
+            assertThat(initialState.homeserver).isEqualTo(LoginConstants.DEFAULT_HOMESERVER_URL)
             assertThat(initialState.submitEnabled).isTrue()
         }
     }
