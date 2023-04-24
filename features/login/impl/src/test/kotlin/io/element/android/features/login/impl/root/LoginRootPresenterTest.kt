@@ -22,6 +22,7 @@ import app.cash.molecule.RecompositionClock
 import app.cash.molecule.moleculeFlow
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
+import io.element.android.features.login.impl.oidc.customtab.DefaultOidcActionFlow
 import io.element.android.features.login.impl.util.LoginConstants
 import io.element.android.libraries.architecture.Async
 import io.element.android.libraries.matrix.api.auth.MatrixHomeServerDetails
@@ -42,6 +43,7 @@ class LoginRootPresenterTest {
     fun `present - initial state`() = runTest {
         val presenter = LoginRootPresenter(
             FakeAuthenticationService(),
+            DefaultOidcActionFlow(),
         )
         moleculeFlow(RecompositionClock.Immediate) {
             presenter.present()
@@ -59,8 +61,10 @@ class LoginRootPresenterTest {
     @Test
     fun `present - initial state server load`() = runTest {
         val authenticationService = FakeAuthenticationService()
+        val oidcActionFlow = DefaultOidcActionFlow()
         val presenter = LoginRootPresenter(
             authenticationService,
+            oidcActionFlow,
         )
         moleculeFlow(RecompositionClock.Immediate) {
             presenter.present()
@@ -83,8 +87,10 @@ class LoginRootPresenterTest {
     @Test
     fun `present - initial state server load error and retry`() = runTest {
         val authenticationService = FakeAuthenticationService()
+        val oidcActionFlow = DefaultOidcActionFlow()
         val presenter = LoginRootPresenter(
             authenticationService,
+            oidcActionFlow,
         )
         moleculeFlow(RecompositionClock.Immediate) {
             presenter.present()
@@ -116,8 +122,10 @@ class LoginRootPresenterTest {
     @Test
     fun `present - enter login and password`() = runTest {
         val authenticationService = FakeAuthenticationService()
+        val oidcActionFlow = DefaultOidcActionFlow()
         val presenter = LoginRootPresenter(
             authenticationService,
+            oidcActionFlow,
         )
         authenticationService.givenHomeserver(A_HOMESERVER)
         moleculeFlow(RecompositionClock.Immediate) {
@@ -138,8 +146,10 @@ class LoginRootPresenterTest {
     @Test
     fun `present - oidc login`() = runTest {
         val authenticationService = FakeAuthenticationService()
+        val oidcActionFlow = DefaultOidcActionFlow()
         val presenter = LoginRootPresenter(
             authenticationService,
+            oidcActionFlow,
         )
         authenticationService.givenHomeserver(A_HOMESERVER_OIDC)
         moleculeFlow(RecompositionClock.Immediate) {
@@ -156,8 +166,10 @@ class LoginRootPresenterTest {
     @Test
     fun `present - oidc login error`() = runTest {
         val authenticationService = FakeAuthenticationService()
+        val oidcActionFlow = DefaultOidcActionFlow()
         val presenter = LoginRootPresenter(
             authenticationService,
+            oidcActionFlow,
         )
         authenticationService.givenHomeserver(A_HOMESERVER_OIDC)
         authenticationService.givenOidcError(A_THROWABLE)
@@ -175,8 +187,10 @@ class LoginRootPresenterTest {
     @Test
     fun `present - submit`() = runTest {
         val authenticationService = FakeAuthenticationService()
+        val oidcActionFlow = DefaultOidcActionFlow()
         val presenter = LoginRootPresenter(
             authenticationService,
+            oidcActionFlow,
         )
         authenticationService.givenHomeserver(A_HOMESERVER)
         moleculeFlow(RecompositionClock.Immediate) {
@@ -198,8 +212,10 @@ class LoginRootPresenterTest {
     @Test
     fun `present - submit with error`() = runTest {
         val authenticationService = FakeAuthenticationService()
+        val oidcActionFlow = DefaultOidcActionFlow()
         val presenter = LoginRootPresenter(
             authenticationService,
+            oidcActionFlow,
         )
         authenticationService.givenHomeserver(A_HOMESERVER)
         moleculeFlow(RecompositionClock.Immediate) {
@@ -222,8 +238,10 @@ class LoginRootPresenterTest {
     @Test
     fun `present - clear error`() = runTest {
         val authenticationService = FakeAuthenticationService()
+        val oidcActionFlow = DefaultOidcActionFlow()
         val presenter = LoginRootPresenter(
             authenticationService,
+            oidcActionFlow,
         )
         authenticationService.givenHomeserver(A_HOMESERVER)
         moleculeFlow(RecompositionClock.Immediate) {
