@@ -54,7 +54,9 @@ import kotlinx.coroutines.withTimeout
 import org.matrix.rustcomponents.sdk.Client
 import org.matrix.rustcomponents.sdk.ClientDelegate
 import org.matrix.rustcomponents.sdk.RequiredState
+import org.matrix.rustcomponents.sdk.SlidingSyncList
 import org.matrix.rustcomponents.sdk.SlidingSyncListBuilder
+import org.matrix.rustcomponents.sdk.SlidingSyncListOnceBuilt
 import org.matrix.rustcomponents.sdk.SlidingSyncMode
 import org.matrix.rustcomponents.sdk.SlidingSyncRequestListFilters
 import org.matrix.rustcomponents.sdk.TaskHandle
@@ -82,7 +84,7 @@ class RustMatrixClient constructor(
         client = client,
         dispatchers = dispatchers,
     )
-    private val notificationService = RustNotificationService(baseDirectory, dispatchers)
+    private val notificationService = RustNotificationService(client, dispatchers)
     private var slidingSyncUpdateJob: Job? = null
 
     private val clientDelegate = object : ClientDelegate {
@@ -105,7 +107,9 @@ class RustMatrixClient constructor(
         notTags = emptyList()
     )
 
-    private val visibleRoomsSlidingSyncList = SlidingSyncListBuilder()
+    private lateinit var visibleRoomsSlidingSyncList: SlidingSyncList
+
+    private val visibleRoomsSlidingSyncListBuilder = SlidingSyncListBuilder("CurrentlyVisibleRooms")
         .timelineLimit(limit = 1u)
         .requiredState(
             requiredState = listOf(
@@ -115,16 +119,17 @@ class RustMatrixClient constructor(
             )
         )
         .filters(visibleRoomsSlidingSyncFilters)
-        .name(name = "CurrentlyVisibleRooms")
         .syncMode(mode = SlidingSyncMode.SELECTIVE)
         .addRange(0u, 20u)
-        .use {
-            it.build()
-        }
+        .onceBuilt(object : SlidingSyncListOnceBuilt {
+            override fun updateList(list: SlidingSyncList) = list.also { visibleRoomsSlidingSyncList = it }
+        })
 
     private val invitesSlidingSyncFilters = visibleRoomsSlidingSyncFilters.copy(isInvite = true)
 
-    private val invitesSlidingSyncList = SlidingSyncListBuilder()
+    private lateinit var invitesSlidingSyncList: SlidingSyncList
+
+    private val invitesSlidingSyncListBuilder = SlidingSyncListBuilder("CurrentInvites")
         .timelineLimit(limit = 1u)
         .requiredState(
             requiredState = listOf(
@@ -134,20 +139,19 @@ class RustMatrixClient constructor(
             )
         )
         .filters(invitesSlidingSyncFilters)
-        .name(name = "CurrentInvites")
         .syncMode(mode = SlidingSyncMode.SELECTIVE)
         .addRange(0u, 20u)
-        .use {
-            it.build()
-        }
+        .onceBuilt(object : SlidingSyncListOnceBuilt {
+            override fun updateList(list: SlidingSyncList) = list.also { invitesSlidingSyncList = it }
+        })
 
     private val slidingSync = client
         .slidingSync()
         .homeserver("https://slidingsync.lab.matrix.org")
         .withCommonExtensions()
         .storageKey("ElementX")
-        .addList(visibleRoomsSlidingSyncList)
-        .addList(invitesSlidingSyncList)
+        .addList(visibleRoomsSlidingSyncListBuilder)
+        .addList(invitesSlidingSyncListBuilder)
         .use {
             it.build()
         }
