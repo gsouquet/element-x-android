@@ -102,7 +102,7 @@ fun CreateRoomRootView(
 
     when (state.startDmAction) {
         is Async.Loading -> {
-            ProgressDialog(text = stringResource(id = StringR.string.common_creating_room))
+            ProgressDialog(text = stringResource(id = StringR.string.common_starting_chat))
         }
 
         is Async.Failure -> {
